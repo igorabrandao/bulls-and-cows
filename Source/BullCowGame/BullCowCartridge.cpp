@@ -7,29 +7,49 @@ void UBullCowCartridge::BeginPlay() // When the game starts
 
     // Setting up the game initial state
     this->SetupGame();
-
-    PrintLine(TEXT("Welcome to Bull Cows!"));
-    PrintLine(TEXT("Guess the %i letter word!"), this->HiddenWord.Len());
-    PrintLine(TEXT("Type in your guess and press enter to continue..."));
 }
 
 void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
 {
-    ClearScreen();
-
-    if (Input == this->HiddenWord)
+    if (this->bGameOver)
     {
-        PrintLine(TEXT("You have Won!"));
+        ClearScreen();
+        this->SetupGame(); // Setting up the new game
     }
     else
     {
-        if (Input.Len() != this->HiddenWord.Len())
+        if (Input == this->HiddenWord)
         {
-            PrintLine(TEXT("The Hidden Word is %i characters long, try again!"), this->HiddenWord.Len());
+            PrintLine(TEXT("You have Won!"));
+            this->EndGame();
         }
+        else
+        {
+            PrintLine(TEXT("You lost a life, now you have %i lives"), --this->Lives);
 
-        PrintLine(TEXT("You have Lost!"));
+            if (Input.Len() != this->HiddenWord.Len())
+            {
+                PrintLine(TEXT("The Hidden Word is %i characters long"), this->HiddenWord.Len());
+            }
+            
+            if (this->Lives == 0)
+            {
+                PrintLine(TEXT("You have Lost!"));
+                this->EndGame();
+            }
+        }
     }
+}
+
+/**
+ * Method to display the welcome message
+ */
+void UBullCowCartridge::DisplayWelcomeMessage() const
+{
+    PrintLine(TEXT("Welcome to Bull Cows!"));
+    PrintLine(TEXT("Guess the %i letter word!"), this->HiddenWord.Len());
+    PrintLine(TEXT("You have %i lives"), this->Lives);
+    PrintLine(TEXT("Type in your guess. \nPress enter to continue..."));
 }
 
 /**
@@ -38,5 +58,17 @@ void UBullCowCartridge::OnInput(const FString &Input) // When the player hits en
 void UBullCowCartridge::SetupGame()
 {
     this->HiddenWord = TEXT("cakes");
-    this->Lives = 4;
+    this->Lives = this->HiddenWord.Len();
+    this->bGameOver = false;
+
+    this->DisplayWelcomeMessage();
+}
+
+/**
+ * Method to handle the end game
+ */
+void UBullCowCartridge::EndGame()
+{
+    this->bGameOver = true;
+    PrintLine(TEXT("Press enter to play again."));
 }
