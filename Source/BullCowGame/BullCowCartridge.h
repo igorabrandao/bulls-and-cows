@@ -6,16 +6,18 @@
 #include "Console/Cartridge.h"
 #include "BullCowCartridge.generated.h"
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BULLCOWGAME_API UBullCowCartridge : public UCartridge
 {
 	GENERATED_BODY()
 
-	public:
+public:
 	virtual void BeginPlay() override;
-	virtual void OnInput(const FString& Input) override;
+	virtual void OnInput(const FString &Input) override;
+	void SetupGame();
 
 	// Your declarations go below!
-	private:
-	
+private:
+	FString HiddenWord;
+	int32 Lives;
 };
