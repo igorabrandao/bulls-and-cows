@@ -18,24 +18,7 @@ void UBullCowCartridge::OnInput(const FString &Input) // When the player hits en
     }
     else
     {
-        if (Input == this->HiddenWord)
-        {
-            PrintLine(TEXT("You have Won!"));
-            this->EndGame();
-        }
-        else
-        {
-            --this->Lives;
-
-            if (this->Lives > 0) {
-                PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining"), this->Lives);
-            }
-            else
-            {
-                PrintLine(TEXT("You have no lives left!"));
-                this->EndGame();
-            }
-        }
+        this->ProcessGuess(Input);
     }
 }
 
@@ -69,4 +52,30 @@ void UBullCowCartridge::EndGame()
 {
     this->bGameOver = true;
     PrintLine(TEXT("Press enter to play again."));
+}
+
+/**
+ * Method to handle the end game
+ */
+void UBullCowCartridge::ProcessGuess(const FString Guess)
+{
+    if (Guess == this->HiddenWord)
+    {
+        PrintLine(TEXT("You have Won!"));
+        this->EndGame();
+    }
+    else
+    {
+        --this->Lives;
+
+        if (this->Lives > 0)
+        {
+            PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining"), this->Lives);
+        }
+        else
+        {
+            PrintLine(TEXT("You have no lives left!"));
+            this->EndGame();
+        }
+    }
 }

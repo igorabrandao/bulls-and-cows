@@ -17,6 +17,7 @@ public:
 	void DisplayWelcomeMessage() const;
 	void SetupGame();
 	void EndGame();
+	void ProcessGuess(const FString Guess);
 
 	// Your declarations go below!
 private:
