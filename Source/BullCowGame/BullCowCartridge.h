@@ -15,7 +15,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnInput(const FString &Input) override;
 	void DisplayWelcomeMessage() const;
-	TArray<FString> GetValidWords();
+	TArray<FString> GetValidWords() const;
 	void SetupGame();
 	void EndGame();
 	void ProcessGuess(const FString Guess);

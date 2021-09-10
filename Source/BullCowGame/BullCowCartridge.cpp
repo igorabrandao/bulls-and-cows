@@ -18,7 +18,7 @@ void UBullCowCartridge::BeginPlay() // When the game starts
 /**
  * Function to filter the valid words from the word list
  */
-TArray<FString> UBullCowCartridge::GetValidWords()
+TArray<FString> UBullCowCartridge::GetValidWords() const
 {
     const int32 WordMinLen = 4;
     const int32 WordMaxLen = 8;
