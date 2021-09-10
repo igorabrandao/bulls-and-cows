@@ -5,15 +5,40 @@
 
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
+    // Call the super class method
     Super::BeginPlay();
-
-    // Load the isogram word list from the file
-    TArray<FString> Words;
-    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
-    FFileHelper::LoadFileToStringArray(Words, *WordListPath);
 
     // Setting up the game initial state
     this->SetupGame();
+
+    // Load the list of valid hidden words
+    this->HiddenWordList = this->GetValidWords();
+}
+
+/**
+ * Function to filter the valid words from the word list
+ */
+TArray<FString> UBullCowCartridge::GetValidWords()
+{
+    const int32 WordMinLen = 4;
+    const int32 WordMaxLen = 8;
+    TArray<FString> Words;
+    TArray<FString> ValidWords;
+
+    // Load the isogram word list from the file
+    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
+    FFileHelper::LoadFileToStringArray(Words, *WordListPath);
+
+    // Select the valid words for the game
+    for (size_t i = 0; i < Words.Num(); i++)
+    {
+        if (Words[i].Len() >= WordMinLen && Words[i].Len() <= WordMaxLen && this->IsIsogram(Words[i]))
+        {
+            ValidWords.Emplace(Words[i]);
+        }
+    }
+
+    return ValidWords;
 }
 
 void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
