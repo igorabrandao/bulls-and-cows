@@ -51,7 +51,7 @@ void UBullCowCartridge::SetupGame()
 void UBullCowCartridge::EndGame()
 {
     this->bGameOver = true;
-    PrintLine(TEXT("Press enter to play again."));
+    PrintLine(TEXT("\nPress enter to play again."));
 }
 
 /**
@@ -63,19 +63,58 @@ void UBullCowCartridge::ProcessGuess(const FString Guess)
     {
         PrintLine(TEXT("You have Won!"));
         this->EndGame();
+        return;
     }
-    else
-    {
-        --this->Lives;
 
-        if (this->Lives > 0)
+    if (Guess.Len() != this->HiddenWord.Len())
+    {
+        PrintLine(TEXT("The hidden word is %i letters long"), this->HiddenWord.Len());
+        PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining"), this->Lives);
+        return;
+    }
+
+    // Check if isogram
+    if (!this->IsIsogram(Guess))
+    {
+        PrintLine(TEXT("No repeating letters, guess again"));
+    }
+
+    // Remove life
+    PrintLine(TEXT("Lost a life!"));
+    --this->Lives;
+
+    if (this->Lives <= 0)
+    {
+        ClearScreen();
+        PrintLine(TEXT("You have no lives left!"));
+        PrintLine(TEXT("The hidden word was: %s"), *this->HiddenWord);
+        this->EndGame();
+        return;
+    }
+
+    PrintLine(TEXT("Guess again, you have %i lives left"), this->Lives);
+}
+
+/**
+ * Function to check whether or not a word is an isogram
+ */
+bool UBullCowCartridge::IsIsogram(const FString Word) const
+{
+    int32 WordLength = Word.Len();
+
+    for (size_t i = 0; i < (WordLength - 1); i++)
+    {
+        for (size_t j = (i + 1); j < WordLength; j++)
         {
-            PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining"), this->Lives);
-        }
-        else
-        {
-            PrintLine(TEXT("You have no lives left!"));
-            this->EndGame();
+            // Check if the current word repeat with any from the entire word
+            if (Word[i] == Word[j])
+            {
+                // The word is not a Isogram
+                return false;
+            }
         }
     }
+
+    // The word is a Isogram
+    return true;
 }
