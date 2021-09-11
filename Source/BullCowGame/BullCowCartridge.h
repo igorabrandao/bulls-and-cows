@@ -15,11 +15,11 @@ public:
 	virtual void BeginPlay() override;
 	virtual void OnInput(const FString &Input) override;
 	void DisplayWelcomeMessage() const;
-	TArray<FString> GetValidWords() const;
+	TArray<FString> GetValidWords(const TArray<FString> &WordList) const;
 	void SetupGame();
 	void EndGame();
 	void ProcessGuess(const FString Guess);
-	bool IsIsogram(const FString Word) const;
+	bool IsIsogram(const FString &Word) const;
 
 	// Your declarations go below!
 private:

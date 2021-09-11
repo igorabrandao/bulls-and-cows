@@ -8,40 +8,38 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     // Call the super class method
     Super::BeginPlay();
 
+    // Load the list of hidden words
+    TArray<FString> Words;
+    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
+    FFileHelper::LoadFileToStringArray(Words, *WordListPath);
+
+    // Select the valid hidden words
+    this->HiddenWordList = this->GetValidWords(Words);
+
     // Setting up the game initial state
     this->SetupGame();
-
-    // Load the list of valid hidden words
-    this->HiddenWordList = this->GetValidWords();
 }
 
 /**
  * Function to filter the valid words from the word list
  */
-TArray<FString> UBullCowCartridge::GetValidWords() const
+TArray<FString> UBullCowCartridge::GetValidWords(const TArray<FString> &WordList) const
 {
-    const int32 WordMinLen = 4;
-    const int32 WordMaxLen = 8;
-    TArray<FString> Words;
     TArray<FString> ValidWords;
 
-    // Load the isogram word list from the file
-    const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/HiddenWordList.txt");
-    FFileHelper::LoadFileToStringArray(Words, *WordListPath);
-
     // Select the valid words for the game
-    for (size_t i = 0; i < Words.Num(); i++)
+    for (FString Word : WordList)
     {
-        if (Words[i].Len() >= WordMinLen && Words[i].Len() <= WordMaxLen && this->IsIsogram(Words[i]))
+        if (Word.Len() >= 4 && Word.Len() <= 8 && this->IsIsogram(Word))
         {
-            ValidWords.Emplace(Words[i]);
+            ValidWords.Emplace(Word);
         }
     }
 
     return ValidWords;
 }
 
-void UBullCowCartridge::OnInput(const FString &Input) // When the player hits enter
+void UBullCowCartridge::OnInput(const FString &PlayerInput) // When the player hits enter
 {
     if (this->bGameOver)
     {
@@ -50,7 +48,7 @@ void UBullCowCartridge::OnInput(const FString &Input) // When the player hits en
     }
     else
     {
-        this->ProcessGuess(Input);
+        this->ProcessGuess(PlayerInput);
     }
 }
 
@@ -70,7 +68,7 @@ void UBullCowCartridge::DisplayWelcomeMessage() const
  */
 void UBullCowCartridge::SetupGame()
 {
-    this->HiddenWord = TEXT("cakes");
+    this->HiddenWord = this->HiddenWordList[FMath::RandRange(0, this->HiddenWordList.Num() - 1)];
     this->Lives = this->HiddenWord.Len();
     this->bGameOver = false;
 
@@ -130,7 +128,7 @@ void UBullCowCartridge::ProcessGuess(const FString Guess)
 /**
  * Function to check whether or not a word is an isogram
  */
-bool UBullCowCartridge::IsIsogram(const FString Word) const
+bool UBullCowCartridge::IsIsogram(const FString &Word) const
 {
     int32 WordLength = Word.Len();
 
