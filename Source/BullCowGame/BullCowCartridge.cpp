@@ -14,7 +14,7 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     FFileHelper::LoadFileToStringArray(Words, *WordListPath);
 
     // Select the valid hidden words
-    this->HiddenWordList = this->GetValidWords(Words);
+    this->Isograms = this->GetValidWords(Words);
 
     // Setting up the game initial state
     this->SetupGame();
@@ -68,7 +68,7 @@ void UBullCowCartridge::DisplayWelcomeMessage() const
  */
 void UBullCowCartridge::SetupGame()
 {
-    this->HiddenWord = this->HiddenWordList[FMath::RandRange(0, this->HiddenWordList.Num() - 1)];
+    this->HiddenWord = this->Isograms[FMath::RandRange(0, this->Isograms.Num() - 1)];
     this->Lives = this->HiddenWord.Len();
     this->bGameOver = false;
 
@@ -122,6 +122,10 @@ void UBullCowCartridge::ProcessGuess(const FString Guess)
         return;
     }
 
+    // Show the player Bulls and Cows
+    this->GetBullCows(Guess);
+
+    PrintLine(TEXT("You have %i Bulls and %i Cows"), this->Count.Bulls, this->Count.Cows);
     PrintLine(TEXT("Guess again, you have %i lives left"), this->Lives);
 }
 
@@ -132,9 +136,9 @@ bool UBullCowCartridge::IsIsogram(const FString &Word) const
 {
     int32 WordLength = Word.Len();
 
-    for (size_t i = 0; i < (WordLength - 1); i++)
+    for (int32 i = 0; i < (WordLength - 1); i++)
     {
-        for (size_t j = (i + 1); j < WordLength; j++)
+        for (int32 j = (i + 1); j < WordLength; j++)
         {
             // Check if the current word repeat with any from the entire word
             if (Word[i] == Word[j])
@@ -147,4 +151,31 @@ bool UBullCowCartridge::IsIsogram(const FString &Word) const
 
     // The word is a Isogram
     return true;
+}
+
+/**
+ * Method to count the Bulls and Cows
+ */
+void UBullCowCartridge::GetBullCows(const FString &Guess)
+{
+    this->Count.Bulls = 0;
+    this->Count.Cows = 0;
+
+    for (int32 i = 0; i < Guess.Len(); i++)
+    {
+        if (Guess[i] == this->HiddenWord[i])
+        {
+            this->Count.Bulls++;
+            continue;
+        }
+
+        for (int32 j = 0; j < this->HiddenWord.Len(); j++)
+        {
+            if (Guess[i] == this->HiddenWord[j])
+            {
+                this->Count.Cows++;
+                break;
+            }
+        }
+    }
 }
