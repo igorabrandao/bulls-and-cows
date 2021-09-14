@@ -26,7 +26,7 @@ public:
 	void ProcessGuess(const FString Guess);
 	bool IsIsogram(const FString &Word) const;
 	TArray<FString> GetValidWords(const TArray<FString> &WordList) const;
-	void GetBullCows(const FString &Guess);
+	FBullCowCount GetBullCows(const FString &Guess) const;
 
 	// Your declarations go below!
 private:
@@ -34,5 +34,4 @@ private:
 	int32 Lives;
 	TArray<FString> Isograms;
 	bool bGameOver;
-	FBullCowCount Count;
 };

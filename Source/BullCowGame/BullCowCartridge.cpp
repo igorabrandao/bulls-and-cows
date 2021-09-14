@@ -123,9 +123,9 @@ void UBullCowCartridge::ProcessGuess(const FString Guess)
     }
 
     // Show the player Bulls and Cows
-    this->GetBullCows(Guess);
+    FBullCowCount Score = this->GetBullCows(Guess);
 
-    PrintLine(TEXT("You have %i Bulls and %i Cows"), this->Count.Bulls, this->Count.Cows);
+    PrintLine(TEXT("You have %i Bulls and %i Cows"), Score.Bulls, Score.Cows);
     PrintLine(TEXT("Guess again, you have %i lives left"), this->Lives);
 }
 
@@ -156,16 +156,15 @@ bool UBullCowCartridge::IsIsogram(const FString &Word) const
 /**
  * Method to count the Bulls and Cows
  */
-void UBullCowCartridge::GetBullCows(const FString &Guess)
+FBullCowCount UBullCowCartridge::GetBullCows(const FString &Guess) const
 {
-    this->Count.Bulls = 0;
-    this->Count.Cows = 0;
+    FBullCowCount Count;
 
     for (int32 i = 0; i < Guess.Len(); i++)
     {
         if (Guess[i] == this->HiddenWord[i])
         {
-            this->Count.Bulls++;
+            Count.Bulls++;
             continue;
         }
 
@@ -173,9 +172,11 @@ void UBullCowCartridge::GetBullCows(const FString &Guess)
         {
             if (Guess[i] == this->HiddenWord[j])
             {
-                this->Count.Cows++;
+                Count.Cows++;
                 break;
             }
         }
     }
+
+    return Count;
 }
